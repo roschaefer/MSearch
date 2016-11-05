@@ -1,0 +1,171 @@
+{
+   "attributes" : {
+      "downloadAllowed" : {
+         "profile" : "http://zdf.de/rels/streams/ptmd/attributes/attribute",
+         "value" : false
+      },
+      "duration" : {
+         "profile" : "http://zdf.de/rels/streams/ptmd/attributes/attribute",
+         "value" : 2635000
+      },
+      "fsk" : {
+         "profile" : "http://zdf.de/rels/streams/ptmd/attributes/attribute",
+         "value" : "none"
+      },
+      "geoLocation" : {
+         "profile" : "http://zdf.de/rels/streams/ptmd/attributes/attribute",
+         "value" : "none"
+      },
+      "profile" : "http://zdf.de/rels/streams/ptmd/attributes"
+   },
+   "basename" : "110516_dvoland_tex",
+   "captions" : [
+      {
+         "class" : "hoh",
+         "format" : "ebu-tt-d-basic-de",
+         "language" : "deu",
+         "offset" : 0,
+         "profile" : "http://zdf.de/rels/streams/ptmd/caption",
+         "uri" : "https://utstreaming.zdf.de/mtt/zdf/11/05/110516_dvoland_tex/2/Deutschland_von_oben2_Land_220511.xml"
+      },
+      {
+         "class" : "hoh",
+         "format" : "webvtt",
+         "language" : "deu",
+         "offset" : 0,
+         "profile" : "http://zdf.de/rels/streams/ptmd/caption",
+         "uri" : "https://utstreaming.zdf.de/mtt/zdf/11/05/110516_dvoland_tex/2/Deutschland_von_oben2_Land_220511.vtt"
+      }
+   ],
+   "documentVersion" : 2,
+   "mandant" : "mediathek",
+   "playerId" : "portal",
+   "priorityList" : [
+      {
+         "formitaeten" : [
+            {
+               "facets" : [
+                  "progressive"
+               ],
+               "isAdaptive" : false,
+               "mimeType" : "video/mp4",
+               "profile" : "http://zdf.de/rels/streams/ptmd/priority-list-item/formitaet",
+               "qualities" : [
+                  {
+                     "audio" : {
+                        "profile" : "http://zdf.de/rels/streams/ptmd/priority-list-item/formitaet/quality/audio",
+                        "tracks" : [
+                           {
+                              "cdn" : "akamai",
+                              "class" : "main",
+                              "language" : "deu",
+                              "profile" : "http://zdf.de/rels/streams/ptmd/priority-list-item/formitaet/quality/audio/track",
+                              "uri" : "https://nrodlzdf-a.akamaihd.net/none/zdf/11/05/110516_dvoland_tex/2/110516_dvoland_tex_vh.mp4"
+                           }
+                        ]
+                     },
+                     "hd" : false,
+                     "mimeCodec" : "avc1.4d001e,mp4a.40.2",
+                     "profile" : "http://zdf.de/rels/streams/ptmd/priority-list-item/formitaet/quality",
+                     "quality" : "veryhigh"
+                  },
+                  {
+                     "audio" : {
+                        "profile" : "http://zdf.de/rels/streams/ptmd/priority-list-item/formitaet/quality/audio",
+                        "tracks" : [
+                           {
+                              "cdn" : "akamai",
+                              "class" : "main",
+                              "language" : "deu",
+                              "profile" : "http://zdf.de/rels/streams/ptmd/priority-list-item/formitaet/quality/audio/track",
+                              "uri" : "https://nrodlzdf-a.akamaihd.net/none/zdf/11/05/110516_dvoland_tex/2/110516_dvoland_tex_h.mp4"
+                           }
+                        ]
+                     },
+                     "hd" : false,
+                     "mimeCodec" : "avc1.4d001e,mp4a.40.2",
+                     "profile" : "http://zdf.de/rels/streams/ptmd/priority-list-item/formitaet/quality",
+                     "quality" : "high"
+                  },
+                  {
+                     "audio" : {
+                        "profile" : "http://zdf.de/rels/streams/ptmd/priority-list-item/formitaet/quality/audio",
+                        "tracks" : [
+                           {
+                              "cdn" : "akamai",
+                              "class" : "main",
+                              "language" : "deu",
+                              "profile" : "http://zdf.de/rels/streams/ptmd/priority-list-item/formitaet/quality/audio/track",
+                              "uri" : "https://nrodlzdf-a.akamaihd.net/none/zdf/11/05/110516_dvoland_tex/2/110516_dvoland_tex_l.mp4"
+                           }
+                        ]
+                     },
+                     "hd" : false,
+                     "mimeCodec" : "avc1.42e01e,mp4a.40.2",
+                     "profile" : "http://zdf.de/rels/streams/ptmd/priority-list-item/formitaet/quality",
+                     "quality" : "low"
+                  }
+               ],
+               "type" : "h264_aac_mp4_http_na_na"
+            }
+         ],
+         "profile" : "http://zdf.de/rels/streams/ptmd/priority-list-item"
+      },
+      {
+         "formitaeten" : [
+            {
+               "facets" : [
+                  "restriction_useragent"
+               ],
+               "isAdaptive" : false,
+               "mimeType" : "video/mp4",
+               "profile" : "http://zdf.de/rels/streams/ptmd/priority-list-item/formitaet",
+               "qualities" : [
+                  {
+                     "audio" : {
+                        "profile" : "http://zdf.de/rels/streams/ptmd/priority-list-item/formitaet/quality/audio",
+                        "tracks" : [
+                           {
+                              "cdn" : "akamai",
+                              "class" : "main",
+                              "language" : "deu",
+                              "profile" : "http://zdf.de/rels/streams/ptmd/priority-list-item/formitaet/quality/audio/track",
+                              "uri" : "https://rodlzdf-a.akamaihd.net/none/zdf/11/05/110516_dvoland_tex/2/110516_dvoland_tex_vh.mp4"
+                           }
+                        ]
+                     },
+                     "hd" : false,
+                     "mimeCodec" : "avc1.4d001e,mp4a.40.2",
+                     "profile" : "http://zdf.de/rels/streams/ptmd/priority-list-item/formitaet/quality",
+                     "quality" : "veryhigh"
+                  },
+                  {
+                     "audio" : {
+                        "profile" : "http://zdf.de/rels/streams/ptmd/priority-list-item/formitaet/quality/audio",
+                        "tracks" : [
+                           {
+                              "cdn" : "akamai",
+                              "class" : "main",
+                              "language" : "deu",
+                              "profile" : "http://zdf.de/rels/streams/ptmd/priority-list-item/formitaet/quality/audio/track",
+                              "uri" : "https://rodlzdf-a.akamaihd.net/none/zdf/11/05/110516_dvoland_tex/2/110516_dvoland_tex_h.mp4"
+                           }
+                        ]
+                     },
+                     "hd" : false,
+                     "mimeCodec" : "avc1.4d001e,mp4a.40.2",
+                     "profile" : "http://zdf.de/rels/streams/ptmd/priority-list-item/formitaet/quality",
+                     "quality" : "high"
+                  }
+               ],
+               "type" : "h264_aac_mp4_http_na_na"
+            }
+         ],
+         "profile" : "http://zdf.de/rels/streams/ptmd/priority-list-item"
+      }
+   ],
+   "profile" : "http://zdf.de/rels/streams/ptmd",
+   "self" : "/tmd/2/portal/vod/ptmd/mediathek/110516_dvoland_tex/2",
+   "version" : 2
+}
+

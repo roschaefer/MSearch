@@ -19,10 +19,20 @@
  */
 package mSearch.filmeSuchen.sender;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import com.fasterxml.jackson.jaxrs.json.annotation.JacksonFeatures;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import mSearch.Config;
 import mSearch.Const;
 import mSearch.daten.DatenFilm;
@@ -164,19 +174,6 @@ public class MediathekZdf extends MediathekReader implements Runnable {
             }
         }
 
-//        private String getToken(String url) {
-//            String apiToken = "";
-//            seite = getUrl.getUri(SENDERNAME, url, Const.KODIERUNG_UTF, 1 /* versuche */, seite, "" /* Meldung */);
-//            if (seite.length() == 0) {
-//                Log.errorLog(461230147, "kein token für URL: " + url);
-//                return "";
-//            }
-//            apiToken = seite.extract("\"apiToken\": \"", "\"");
-//            if (apiToken.isEmpty()) {
-//                Log.errorLog(915263625, "leeres token: " + url);
-//            }
-//            return apiToken;
-//        }
         private void addFilmeJson(String url, String urlSendung, String token, String thema, String titel,
                 long duration, String date, String time, String description) {
             seite2 = getUrl.getUri(SENDERNAME, url, Const.KODIERUNG_UTF, 1 /* versuche */, seite2, "" /* Meldung */, token);
@@ -194,81 +191,33 @@ public class MediathekZdf extends MediathekReader implements Runnable {
             s1 = "https://api.zdf.de//tmd/2/portal/vod/ptmd/mediathek/" + s1;
 //            String s2 = s1;
 
-            seite2 = getUrl.getUri(SENDERNAME, s1, Const.KODIERUNG_UTF, 1 /* versuche */, seite2, "" /* Meldung */, token);
-            if (seite2.length() == 0) {
+            JsonNode filmNode = readUrl(s1, token);
+            if(filmNode == null) {
                 Log.errorLog(721548963, "Leere Seite für URL: " + url);
                 return;
             }
+            
+            String subTitle = getSubTitleUrl(filmNode);
+            String[] filmUrls = getFilmUrls(filmNode);
 
-            // subtitle suchen
-            String subtitle = "";
-            urlList.clear();
-            seite2.extractList("https://utstreaming.zdf.de/mtt", "\"", urlList);
-            for (String s : urlList) {
-                if (s.endsWith(".xml")) {
-                    subtitle = "https://utstreaming.zdf.de/mtt" + s;
-                } else if (subtitle.isEmpty()) {
-                    subtitle = "https://utstreaming.zdf.de/mtt" + s;
-                }
-            }
-            if (!urlList.isEmpty() && subtitle.isEmpty()) {
-                Log.errorLog(912021459, "kein subtitle für URL: " + url);
-            }
-
-            // jetzt werden die Film-Urls gesucht
-            urlList.clear();
-            seite2.extractList("\"uri\" : \"", "\"", urlList);
-            String urlNormal = "";
-            String urlHd = "";
-            String urlLow = "";
-
-            for (String s : urlList) {
-                // mit den Sollwerten
-                // "uri" : "https://rodlzdf-a.akamaihd.net/none/zdf/16/10/161030_grossevoelker2_araber_v2_tex/2/161030_grossevoelker2_araber_v2_tex_1496k_p13v13.mp4" -> 852x
-                // "uri" : "https://nrodlzdf-a.akamaihd.net/none/zdf/16/10/161030_grossevoelker2_araber_v2_tex/2/161030_grossevoelker2_araber_v2_tex_229k_p7v13.mp4" -> 320x
-                // "uri" : "https://nrodlzdf-a.akamaihd.net/none/zdf/16/10/161030_grossevoelker2_araber_v2_tex/2/161030_grossevoelker2_araber_v2_tex_476k_p9v13.mp4" -> 480x
-                if (s.endsWith("2328k_p35v13.mp4") || s.endsWith("2328k_p35v12.mp4")) {
-                    urlNormal = s;
-                }
-                if (s.endsWith("476k_p9v13.mp4") || s.endsWith("436k_p9v12.mp4") || s.endsWith("436k_p9v11.mp4")
-                        || s.endsWith("tex_h.mp4") || s.endsWith("inf_h.mp4")) {
-                    urlLow = s;
-                }
-                if (s.endsWith("3328k_p36v13.mp4") || s.endsWith("3328k_p36v12.mp4")) {
-                    urlHd = s;
-                }
-            }
-            for (String s : urlList) {
-                // dann evtl. die schlechteren
-                if (urlNormal.isEmpty()
-                        && (s.endsWith("1496k_p13v13.mp4") || s.endsWith("1456k_p13v12.mp4") || s.endsWith("1456k_p13v11.mp4") || s.endsWith("tex_vh.mp4")
-                        || s.endsWith("1596k_p13v9.mp4") || s.endsWith("inf_vh.mp4"))) {
-                    urlNormal = s;
-                }
-                if (urlLow.isEmpty() && s.endsWith("229k_p7v13.mp4")) {
-                    urlLow = s;
-                }
-            }
-
-            if (urlNormal.isEmpty()) {
-                urlNormal = urlLow;
-                urlLow = "";
-            }
-            if (urlNormal.isEmpty()) {
+            String urlNormal = getNormalUrl(filmUrls);
+            if (urlNormal == null) {
                 Log.errorLog(642130547, "Keine FilmURL: " + url);
             } else {
                 DatenFilm film = new DatenFilm(SENDERNAME, thema, urlSendung /*urlThema*/, titel, urlNormal, "" /*urlRtmp*/,
                         date, time, duration, description);
                 urlTauschen(film, urlSendung, mSearchFilmeSuchen);
                 addFilm(film);
-                if (!urlHd.isEmpty()) {
-                    film.addUrlHd(urlHd, "");
+                if(filmUrls[4] != null) {
+                    film.addUrlHd(filmUrls[4], "");
                 }
-                if (!urlLow.isEmpty()) {
+                
+                String urlLow = getLowUrl(filmUrls);
+                if (urlLow != null && urlLow != urlNormal) {
                     film.addUrlKlein(urlLow, "");
                 }
-                if (!subtitle.isEmpty()) {
-                    film.addUrlSubtitle(subtitle);
+                if (!subTitle.isEmpty()) {
+                    film.addUrlSubtitle(subTitle);
                 }
             }
         }
@@ -297,8 +246,128 @@ public class MediathekZdf extends MediathekReader implements Runnable {
             return zeit;
         }
 
-    }
+    } 
+    
+    private JsonNode readUrl(String url, String token) {
+        Client c = ClientBuilder.newClient().register(JacksonJsonProvider.class);
+        WebTarget webTarget = c.target(url);
 
+        webTarget.register(JacksonFeatures.class);
+        Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON_TYPE);
+        invocationBuilder.header("Api-Auth", "Bearer " + token);
+        
+        Response response = invocationBuilder.get();
+        if(response.getStatus() == 200) {
+            JsonNode value = response.readEntity(JsonNode.class);
+            return value;        
+        }
+
+        Log.errorLog(915423699, "loading url " + url + " failed with status code " + response.getStatus());        
+        return null;
+    }
+   
+    public String getSubTitleUrl(JsonNode filmNode) {
+        String subTitleUrl = "";
+        
+        Iterator<JsonNode> captions = filmNode.withArray("captions").elements();
+        while(captions.hasNext()) {
+            JsonNode caption = captions.next();
+            
+            String url = caption.get("uri").textValue();
+            
+            // xml-Untertitel werden bevorzugt
+            if (url.endsWith(".xml")) {
+                subTitleUrl = url;
+            } else if (subTitleUrl.isEmpty()) {
+                subTitleUrl = url;
+            }
+        }
+        
+        return subTitleUrl;
+    }
+    
+    public String[] getFilmUrls(JsonNode filmNode) {
+        String[] urls = new String[5];
+        
+        Iterator<JsonNode> priorityList = filmNode.withArray("priorityList").elements();
+        while(priorityList.hasNext()) {
+            JsonNode priority = priorityList.next();
+            
+            Iterator<JsonNode> formitaeten = priority.withArray("formitaeten").elements();
+            while(formitaeten.hasNext()){
+                JsonNode formitaet = formitaeten.next();
+
+                String mimeType = formitaet.get("mimeType").textValue();
+                if(mimeType.equalsIgnoreCase("video/mp4")) {
+                    
+                    Iterator<JsonNode> qualities = formitaet.withArray("qualities").elements();
+                    while(qualities.hasNext()) {
+                        JsonNode quality = qualities.next();
+
+                        JsonNode url = quality.get("audio").withArray("tracks").elements().next();
+                        
+                        urls[getFilmTypeIndex(quality)] = url.get("uri").textValue();
+                    }
+                }
+            }
+        }
+        return urls;
+    }
+    
+    public String getNormalUrl(String[] filmUrls) {
+        for(int i = 3; i >= 0; i--) {
+            if(filmUrls[i] != null) {
+                return filmUrls[i];
+            }
+        }
+        
+        return null;
+    }
+    
+    public String getLowUrl(String[] filmUrls) {
+        for(int i = 2; i >= 0; i--) {
+            if(filmUrls[i] != null) {
+                return filmUrls[i];
+            }
+        }
+        
+        return null;
+    }
+        
+    // Index: 0=low, 1=medium, 2=high, 3=very high, 4=hd
+    private int getFilmTypeIndex(JsonNode quality) {
+        int index = 0;
+        
+        boolean isHd = quality.get("hd").asBoolean();
+        if(isHd) {
+            index = 4;
+        }
+        else {
+            String qualityValue = quality.get("quality").asText();
+            switch(qualityValue) {
+                case "low":
+                    index = 0;
+                    break;
+                case "med":
+                    index = 1;
+                    break;
+                case "high":
+                    index = 2;
+                    break;
+                case "veryhigh":
+                    index = 3;
+                    break;
+                case "hd":
+                    index = 4;
+                    break;
+                default:
+                    Log.errorLog(915423688, "quality " + qualityValue + " unknown.");
+            }
+        }
+        
+        return index;
+    }
+    
     public static void urlTauschen(DatenFilm film, String urlSeite, FilmeSuchen mSFilmeSuchen) {
         // manuell die Auflösung hochsetzen
         changeUrl("1456k_p13v11.mp4", "2256k_p14v11.mp4", film, urlSeite, mSFilmeSuchen);

@@ -1,0 +1,86 @@
+{
+   "attributes" : {
+      "profile" : "http://zdf.de/rels/streams/ptmd/attributes"
+   },
+   "basename" : "160906_sendung_dan",
+   "captions" : [],
+   "documentVersion" : 2,
+   "mandant" : "mediathek",
+   "playerId" : "zdf_pd_download_1",
+   "priorityList" : [
+      {
+         "formitaeten" : [
+            {
+               "facets" : [],
+               "isAdaptive" : false,
+               "mimeType" : "video/mp4",
+               "profile" : "http://zdf.de/rels/streams/ptmd/priority-list-item/formitaet",
+               "qualities" : [
+                  {
+                     "audio" : {
+                        "profile" : "http://zdf.de/rels/streams/ptmd/priority-list-item/formitaet/quality/audio",
+                        "tracks" : [
+                           {
+                              "cdn" : "akamai",
+                              "class" : "main",
+                              "filesize" : "1233116446",
+                              "language" : "deu",
+                              "profile" : "http://zdf.de/rels/streams/ptmd/priority-list-item/formitaet/quality/audio/track",
+                              "uri" : "http://download.zdf.de/mp4/zdf/16/09/160906_sendung_dan/2/160906_sendung_dan_3256k_p15v12.mp4"
+                           }
+                        ]
+                     },
+                     "hd" : true,
+                     "mimeCodec" : "avc1.4d001f,mp4a.40.5",
+                     "profile" : "http://zdf.de/rels/streams/ptmd/priority-list-item/formitaet/quality",
+                     "quality" : "hd"
+                  },
+                  {
+                     "audio" : {
+                        "profile" : "http://zdf.de/rels/streams/ptmd/priority-list-item/formitaet/quality/audio",
+                        "tracks" : [
+                           {
+                              "cdn" : "akamai",
+                              "class" : "main",
+                              "filesize" : "552360705",
+                              "language" : "deu",
+                              "profile" : "http://zdf.de/rels/streams/ptmd/priority-list-item/formitaet/quality/audio/track",
+                              "uri" : "https://downloadzdf-a.akamaihd.net/mp4/zdf/16/09/160906_sendung_dan/2/160906_sendung_dan_1456k_p13v12.mp4"
+                           }
+                        ]
+                     },
+                     "hd" : false,
+                     "mimeCodec" : "avc1.4d001f,mp4a.40.5",
+                     "profile" : "http://zdf.de/rels/streams/ptmd/priority-list-item/formitaet/quality",
+                     "quality" : "veryhigh"
+                  },
+                  {
+                     "audio" : {
+                        "profile" : "http://zdf.de/rels/streams/ptmd/priority-list-item/formitaet/quality/audio",
+                        "tracks" : [
+                           {
+                              "cdn" : "akamai",
+                              "class" : "main",
+                              "filesize" : "166664623",
+                              "language" : "deu",
+                              "profile" : "http://zdf.de/rels/streams/ptmd/priority-list-item/formitaet/quality/audio/track",
+                              "uri" : "https://downloadzdf-a.akamaihd.net/mp4/zdf/16/09/160906_sendung_dan/2/160906_sendung_dan_436k_p9v12.mp4"
+                           }
+                        ]
+                     },
+                     "hd" : false,
+                     "mimeCodec" : "avc1.4d001f,mp4a.40.5",
+                     "profile" : "http://zdf.de/rels/streams/ptmd/priority-list-item/formitaet/quality",
+                     "quality" : "high"
+                  }
+               ],
+               "type" : "h264_aac_mp4_http_na_na"
+            }
+         ],
+         "profile" : "http://zdf.de/rels/streams/ptmd/priority-list-item"
+      }
+   ],
+   "profile" : "http://zdf.de/rels/streams/ptmd",
+   "self" : "/tmd/2/zdf_pd_download_1/vod/ptmd/mediathek/160906_sendung_dan/2",
+   "version" : 2
+}
