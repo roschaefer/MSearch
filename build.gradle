@@ -86,7 +86,7 @@ dependencies {
     compile 'org.glassfish.jersey.core:jersey-client:2.22.2'
     compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.8.4'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.8.4'
-    compile 'junit:junit:4.12'
+    testCompile 'junit:junit:4.12'
 }
 
 distributions {
