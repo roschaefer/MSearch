@@ -21,7 +21,6 @@ package mSearch.filmeSuchen.sender;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-import com.fasterxml.jackson.jaxrs.json.annotation.JacksonFeatures;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -252,7 +251,6 @@ public class MediathekZdf extends MediathekReader implements Runnable {
         Client c = ClientBuilder.newClient().register(JacksonJsonProvider.class);
         WebTarget webTarget = c.target(url);
 
-        webTarget.register(JacksonFeatures.class);
         Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON_TYPE);
         invocationBuilder.header("Api-Auth", "Bearer " + token);
         
