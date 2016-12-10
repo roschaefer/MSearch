@@ -33,13 +33,28 @@ import mSearch.Const;
 import mSearch.tool.Log;
 import org.tukaani.xz.LZMA2Options;
 import org.tukaani.xz.XZOutputStream;
+import java.io.FileWriter;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.CSVFormat;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class WriteFilmlistJson {
 
+  private static final String NEW_LINE_SEPARATOR = "\n";
+
     public void filmlisteSchreibenJson(String datei, ListeFilme listeFilme) {
+
+
+
+
         ZipOutputStream zipOutputStream = null;
         XZOutputStream xZOutputStream = null;
         JsonGenerator jg = null;
+
+        FileWriter fileWriter = null;
+        CSVPrinter csvFilePrinter = null;
         try {
             Log.sysLog("Filme schreiben (" + listeFilme.size() + " Filme) :");
             File file = new File(datei);
@@ -50,34 +65,16 @@ public class WriteFilmlistJson {
                 }
             }
             Log.sysLog("   --> Start Schreiben nach: " + datei);
-            String sender = "", thema = "";
-            JsonFactory jsonF = new JsonFactory();
-            if (datei.endsWith(Const.FORMAT_XZ)) {
-                LZMA2Options options = new LZMA2Options();
-                xZOutputStream = new XZOutputStream(new FileOutputStream(file), options);
-                jg = jsonF.createGenerator(xZOutputStream);
-            } else if (datei.endsWith(Const.FORMAT_ZIP)) {
-                zipOutputStream = new ZipOutputStream(new FileOutputStream(file));
-                ZipEntry entry = new ZipEntry(Const.XML_DATEI_FILME);
-                zipOutputStream.putNextEntry(entry);
-                jg = jsonF.createGenerator(zipOutputStream, JsonEncoding.UTF8);
-            } else {
-                jg = jsonF.createGenerator(new File(datei), JsonEncoding.UTF8);
-            }
-            jg.useDefaultPrettyPrinter(); // enable indentation just to make debug/testing easier
-            jg.writeStartObject();
-            // Infos zur Filmliste
-            jg.writeArrayFieldStart(ListeFilme.FILMLISTE);
-            for (int i = 0; i < ListeFilme.MAX_ELEM; ++i) {
-                jg.writeString(listeFilme.metaDaten[i]);
-            }
-            jg.writeEndArray();
+
+
+            CSVFormat csvFileFormat = CSVFormat.DEFAULT.withDelimiter(';').withQuote('\'').withRecordSeparator("\n");
+            fileWriter = new FileWriter(datei);
+            csvFilePrinter = new CSVPrinter(fileWriter, csvFileFormat);
+
             // Infos der Felder in der Filmliste
-            jg.writeArrayFieldStart(ListeFilme.FILMLISTE);
-            for (int i = 0; i < DatenFilm.JSON_NAMES.length; ++i) {
-                jg.writeString(DatenFilm.COLUMN_NAMES[DatenFilm.JSON_NAMES[i]]);
-            }
-            jg.writeEndArray();
+            csvFilePrinter.printRecord(DatenFilm.COLUMN_NAMES);
+
+
             //Filme schreiben
             DatenFilm datenFilm;
             Iterator<DatenFilm> iterator = listeFilme.iterator();
@@ -85,45 +82,21 @@ public class WriteFilmlistJson {
                 datenFilm = iterator.next();
                 datenFilm.arr[DatenFilm.FILM_NEU] = Boolean.toString(datenFilm.isNew()); // damit wirs beim nächsten Programmstart noch wissen
 
-                jg.writeArrayFieldStart(DatenFilm.TAG_JSON_LIST);
+                List<String> filmRecord = new ArrayList<String>();
                 for (int i = 0; i < DatenFilm.JSON_NAMES.length; ++i) {
-                    int m = DatenFilm.JSON_NAMES[i];
-                    if (m == DatenFilm.FILM_SENDER) {
-                        if (datenFilm.arr[m].equals(sender)) {
-                            jg.writeString("");
-                        } else {
-                            sender = datenFilm.arr[m];
-                            jg.writeString(datenFilm.arr[m]);
-                        }
-                    } else if (m == DatenFilm.FILM_THEMA) {
-                        if (datenFilm.arr[m].equals(thema)) {
-                            jg.writeString("");
-                        } else {
-                            thema = datenFilm.arr[m];
-                            jg.writeString(datenFilm.arr[m]);
-                        }
-                    } else {
-                        jg.writeString(datenFilm.arr[m]);
-                    }
+                  int m = DatenFilm.JSON_NAMES[i];
+                  filmRecord.add(datenFilm.arr[m].replace("\n","").replace("\r",""));
                 }
-                jg.writeEndArray();
+                csvFilePrinter.printRecord(filmRecord);
             }
-            jg.writeEndObject();
             Log.sysLog("   --> geschrieben!");
         } catch (Exception ex) {
             Log.errorLog(846930145, ex, "nach: " + datei);
         } finally {
             try {
-                if (jg != null) {
-                    jg.close();
-                }
-                // die werden nicht immer korrekt geschlossen !??!
-                if (zipOutputStream != null) {
-                    zipOutputStream.close();
-                }
-                if (xZOutputStream != null) {
-                    xZOutputStream.close();
-                }
+              fileWriter.flush();
+              fileWriter.close();
+              csvFilePrinter.close();
             } catch (Exception e) {
                 Log.errorLog(732101201, e, "close stream: " + datei);
             }
